@@ -1,9 +1,6 @@
-from contest_utils import leer_participantes, crear_diccionario_capitan;
-
 def calcular_inversiones(lista_categoria_izq, lista_categoria_der, categorias_capitan):
     categorias_final = []
     cantidad_inversiones = 0 
-    #categorias_lado_derecho = len(lista_categoria_der)
     
     while (len(lista_categoria_izq) > 0) and (len(lista_categoria_der) > 0):
         categoria_izq = lista_categoria_izq[0]
@@ -41,23 +38,7 @@ def contar_inversiones(lista_categorias, categorias_capitan):
     
     return final_ordenado, cantidad_inversiones
 
-def main():
-    #lista = [1, 2, 3, 4, 5]
-    lista = [1, 9, 6, 4, 5]
-    #lista = [8, 1, 7, 2, 6, 3, 5, 4]
+def obtener_cantidad_inversiones(lista_categorias, categorias_capitan):
+    _, cantidad_inversiones = contar_inversiones(lista_categorias, categorias_capitan)
     
-    diccionario = crear_diccionario_capitan(lista)
-    
-    a, inv_a = contar_inversiones(lista, diccionario)
-    print(f"{a} en {inv_a}")
-    
-    #lista_b = lista[::-1]
-    lista_b = [5, 1, 9, 6, 4]
-    print(f"{lista} - {lista_b}")
-    b, inv_b = contar_inversiones(lista_b, diccionario)
-    print(f"{b} en {inv_b}")
-    
-    return 0
-    
-if __name__ == "__main__":
-    main()
+    return cantidad_inversiones
