@@ -25,10 +25,7 @@ def leer_participantes(nombre_archivo, pos_string):
     except Exception as e:
         print(f"Ocurrió un error al procesar el archivo: {str(e)}")
     
-    return {
-        'participantes': participantes,
-        'capitan': capitan
-    }
+    return participantes, capitan
     
 def crear_diccionario_capitan(listado_categorias):
     diccionario = {} 

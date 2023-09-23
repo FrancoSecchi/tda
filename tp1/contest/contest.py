@@ -8,10 +8,7 @@ def main():
 
     archivo_participantes = sys.argv[1]
     pos_capitan = sys.argv[2]
-    datos_iniciales = leer_participantes(archivo_participantes, pos_capitan)
-    
-    participantes = datos_iniciales['participantes']
-    capitan = datos_iniciales['capitan']
+    participantes, capitan = leer_participantes(archivo_participantes, pos_capitan)
     
     print(participantes)
     print(capitan)
