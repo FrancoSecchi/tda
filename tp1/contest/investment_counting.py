@@ -14,8 +14,7 @@ def calcular_inversiones(lista_categoria_izq, lista_categoria_der, categorias_ca
     
     
     if (len(lista_categoria_izq) > 0):
-        categorias_final += lista_categoria_izq
-        cantidad_inversiones += len(lista_categoria_izq) * len(lista_categoria_der)
+        categorias_final += lista_categoria_izq        
     
     if (len(lista_categoria_der) > 0):
         categorias_final += lista_categoria_der
