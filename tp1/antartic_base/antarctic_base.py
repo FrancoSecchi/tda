@@ -1,7 +1,7 @@
 import sys
 
-mejor_solucion_candidatos = []
-mejor_solucion_habilidades = []
+mejor_solucion_candidatos = None
+mejor_solucion_habilidades = None
 
 def leer_habilidades(nombre_archivo):
     habilidades = []
@@ -33,15 +33,8 @@ def leer_candidatos(nombre_archivo, n):
     
     return candidatos
 
-def obtener_descendientes(nro):
-    idx_descendientes = []
-
-    for i in range(len(candidatos_nombres)):
-        if i >= nro:
-            idx_descendientes.append(i)
-    
-    return idx_descendientes
-
+def obtener_descendientes(contrataciones_actuales):
+    return list(set(candidatos.keys()) - set(contrataciones_actuales))
 
 def or_binario(lista1, lista2):
     lista_aux = []
@@ -50,50 +43,49 @@ def or_binario(lista1, lista2):
     
     return lista_aux
 
-
-def backtrack(contrataciones_actuales, habilidades_actuales, nro):
+def backtrack(contrataciones_actuales, habilidades_actuales):
     global mejor_solucion_candidatos
     global mejor_solucion_habilidades
     global max_candidatos
 
-    
-    descendientes = obtener_descendientes(nro)
+    descendientes = obtener_descendientes(contrataciones_actuales)
     descendientes_costo = {}
 
-    for idx_descendiente in descendientes:
-        habilidades_ampliadas = or_binario(habilidades_actuales.copy(), candidatos_habilidades[idx_descendiente])
+    for nombre_descendiente in descendientes:
+        habilidades_ampliadas = or_binario(habilidades_actuales, candidatos[nombre_descendiente])
 
         cant_habilidades_cubiertas = sum(habilidades_ampliadas)
-        descendientes_costo[idx_descendiente] = cant_habilidades_cubiertas
+        descendientes_costo[nombre_descendiente] = cant_habilidades_cubiertas
     
     descendientes_no_explorados = len(descendientes)
     
     while descendientes_no_explorados > 0:
         descendientes_no_explorados -= 1
-        idx_mejor_descendiente = max(descendientes_costo, key=lambda k: descendientes_costo[k])
-        costo_mejor_descendiente = descendientes_costo[idx_mejor_descendiente]
-        contrataciones_proximas = contrataciones_actuales[:] + [candidatos_nombres[idx_mejor_descendiente]]
-        habilidades_proximas = or_binario(habilidades_actuales.copy(), candidatos_habilidades[idx_mejor_descendiente])
 
-        del descendientes_costo[idx_mejor_descendiente]
+        nombre_mejor_descendiente = max(descendientes_costo, key=lambda key: descendientes_costo[key])
+        costo_mejor_descendiente = descendientes_costo[nombre_mejor_descendiente]
+        contrataciones_proximas = contrataciones_actuales[:] + [nombre_mejor_descendiente]
+        habilidades_proximas = or_binario(habilidades_actuales, candidatos[nombre_mejor_descendiente])
 
-        print(contrataciones_proximas)
+        del descendientes_costo[nombre_mejor_descendiente]
 
-        if costo_mejor_descendiente > sum(habilidades_actuales) and len(contrataciones_proximas) < len(mejor_solucion_candidatos):
-            if sum(habilidades_proximas) == len(habilidades_proximas):
-                mejor_solucion_candidatos = contrataciones_proximas
-                mejor_solucion_habilidades = habilidades_proximas
-                print("SOLUCION")
-                return
-        
-            backtrack(contrataciones_proximas, habilidades_proximas, nro+1)
+        if costo_mejor_descendiente > sum(habilidades_actuales):
+            if mejor_solucion_candidatos is None or (len(contrataciones_proximas) < len(mejor_solucion_candidatos)):
+                if sum(habilidades_proximas) == len(habilidades_proximas):
+                    mejor_solucion_candidatos = contrataciones_proximas
+                    mejor_solucion_habilidades = habilidades_proximas
+                    return
+
+                backtrack(contrataciones_proximas, habilidades_proximas)
     
     return
 
+def imprimir_nombres_solucion(nombres_solucion):
+    [print(nombre) for nombre in mejor_solucion_candidatos]
 
 if len(sys.argv) != 3:
     print("Uso: python antarctic_base.py habilidades.txt candidatos.txt")
-    exit
+    exit()
 
 archivo_habilidades = sys.argv[1]
 archivo_candidatos = sys.argv[2]
@@ -102,17 +94,14 @@ archivo_candidatos = sys.argv[2]
 habilidades = leer_habilidades(archivo_habilidades)
 candidatos = leer_candidatos(archivo_candidatos, len(habilidades))
 candidatos_nombres = list(candidatos.keys())
-candidatos_habilidades = list(candidatos.values())
 
-mejor_solucion_candidatos = candidatos_nombres
-mejor_solucion_habilidades = [1] * len(habilidades)
-
-habilidades_cubiertas = [0] * len(habilidades)
-nro = 0
-contrataciones = []
 max_candidatos = len(candidatos)
 
-backtrack(contrataciones, habilidades_cubiertas, nro)
+contrataciones_inicial = []
+hab_cubiertas_inicial = [0] * len(habilidades)
+backtrack(contrataciones_inicial, hab_cubiertas_inicial)
 
-print("\n")
-print("Mejor solucion:", mejor_solucion_candidatos)
+if mejor_solucion_candidatos is None:
+    print("Los candidatos posibles no cubren todas las habilidades requeridas")
+else:
+    imprimir_nombres_solucion(mejor_solucion_candidatos)
