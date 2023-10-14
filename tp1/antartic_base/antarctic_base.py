@@ -34,7 +34,7 @@ def leer_candidatos(nombre_archivo, n):
     return candidatos
 
 def obtener_descendientes(contrataciones_actuales):
-    return list(set(candidatos.keys()) - set(contrataciones_actuales))
+    return [x for x in candidatos_nombres if x not in set(contrataciones_actuales)]
 
 def or_binario(lista1, lista2):
     lista_aux = []
@@ -80,7 +80,7 @@ def backtrack(contrataciones_actuales, habilidades_actuales):
     
     return
 
-def imprimir_nombres_solucion(nombres_solucion):
+def imprimir_nombres_solucion():
     [print(nombre) for nombre in mejor_solucion_candidatos]
 
 if len(sys.argv) != 3:
@@ -99,9 +99,10 @@ max_candidatos = len(candidatos)
 
 contrataciones_inicial = []
 hab_cubiertas_inicial = [0] * len(habilidades)
+
 backtrack(contrataciones_inicial, hab_cubiertas_inicial)
 
 if mejor_solucion_candidatos is None:
     print("Los candidatos posibles no cubren todas las habilidades requeridas")
 else:
-    imprimir_nombres_solucion(mejor_solucion_candidatos)
+    imprimir_nombres_solucion()
