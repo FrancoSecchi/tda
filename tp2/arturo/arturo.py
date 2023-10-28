@@ -2,15 +2,15 @@ import sys
 from arturo_utils import leer_caballeros
 
 
-def maxima_subsecuencia_habilidades(habilidades):
-    longitud_habilidades = len(habilidades)
-    maximo_calculado = habilidades[0]
+def maxima_subsecuencia_popularidad(popularidades):
+    longitud_popularidades = len(popularidades)
+    maximo_calculado = popularidades[0]
     maximo_parcial = maximo_calculado
     index_fin = 0
     i = 1
 
-    while i < longitud_habilidades:
-        maximo_parcial = max(maximo_parcial, 0) + habilidades[i]
+    while i < longitud_popularidades:
+        maximo_parcial = max(maximo_parcial, 0) + popularidades[i]
 
         if maximo_parcial > maximo_calculado:
             maximo_calculado = maximo_parcial
@@ -27,7 +27,7 @@ def main():
         return
 
     try:
-        nombres_caballeros, habilidades = leer_caballeros(sys.argv[1])
+        nombres_caballeros, popularidades = leer_caballeros(sys.argv[1])
     except:
         return
 
@@ -35,13 +35,13 @@ def main():
         print("No se han encontrado caballeros")
         return
 
-    maximo_obtenido, idx_fin = maxima_subsecuencia_habilidades(habilidades)
+    maximo_obtenido, idx_fin = maxima_subsecuencia_popularidad(popularidades)
 
     maximo_parcial = 0
     se_llego_suma = False
     i = idx_fin
     while not se_llego_suma:
-        maximo_parcial += habilidades[i]
+        maximo_parcial += popularidades[i]
         se_llego_suma = maximo_parcial == maximo_obtenido
         print(nombres_caballeros[i], end=", " if not se_llego_suma else "")
         i -= 1
