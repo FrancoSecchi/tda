@@ -6,7 +6,7 @@ def leer_caballeros(nombre_archivo):
     index_min_habilidad = 0
 
     try:
-        with open(nombre_archivo, 'r') as archivo:
+        with open(nombre_archivo, "r") as archivo:
             for linea in archivo:
                 datos = linea.split(",", 1)
                 nombre_caballero = datos[0]
@@ -27,7 +27,13 @@ def leer_caballeros(nombre_archivo):
         raise e
 
     if index_min_habilidad > 0:
-        nombres_caballeros = nombres_caballeros[index_min_habilidad:] + nombres_caballeros[:index_min_habilidad]
-        habilidades_caballeros = habilidades_caballeros[index_min_habilidad:] + habilidades_caballeros[:index_min_habilidad]
+        nombres_caballeros = (
+            nombres_caballeros[index_min_habilidad:]
+            + nombres_caballeros[:index_min_habilidad]
+        )
+        habilidades_caballeros = (
+            habilidades_caballeros[index_min_habilidad:]
+            + habilidades_caballeros[:index_min_habilidad]
+        )
 
     return nombres_caballeros, habilidades_caballeros
