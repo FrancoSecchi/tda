@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from typing import Iterator, Any
+from typing import Iterator
 from grafo_utils import ExeptionGrafo
 
-NOMBRE_FUENTE = 'R'
-NOMBRE_SUMIDERO = 'S'
+NOMBRE_FUENTE = "R"
+NOMBRE_SUMIDERO = "S"
+
 
 class Grafo:
     __vertices = []
@@ -20,8 +21,12 @@ class Grafo:
     def __str__(self) -> str:
         linea = ""
         for v in self.__vertices:
-            for u in self.__aristas.get(v):
-                linea += f"{v} -> {u}. Peso: {self.__aristas[v][u]} \n"
+            aristas_vertice = self.__aristas.get(v)
+
+            if aristas_vertice is not None:
+                for u in aristas_vertice:
+                    linea += f"{v} -> {u}. Peso: {self.__aristas[v][u]} \n"
+
         return linea
 
     @classmethod
@@ -38,25 +43,39 @@ class Grafo:
                     v_destino = datos[1]
                     capacidad = int(datos[2])
 
-                    if v_origen == NOMBRE_FUENTE and not tiene_fuente:
-                        tiene_fuente = True
-                    if v_origen == NOMBRE_SUMIDERO:
-                        raise ExeptionGrafo("El sumidero no puede tener ejes salientes")
-
-                    if v_destino == NOMBRE_SUMIDERO and not tiene_sumidero:
-                        tiene_sumidero = True
-                    if v_destino == NOMBRE_FUENTE:
-                        raise ExeptionGrafo("La fuente no puede tener ejes entrantes")
-
                     g.agregar_vertice(v_origen)
                     g.agregar_vertice(v_destino)
-                    g.agregar_arista_bidireccional(v_origen, v_destino, capacidad)
+
+                    es_fuente_origen = v_origen == NOMBRE_FUENTE
+                    es_sumidero_destino = v_destino == NOMBRE_SUMIDERO
+
+                    if es_fuente_origen:
+                        tiene_fuente = True
+                    elif v_origen == NOMBRE_SUMIDERO:
+                        raise ExeptionGrafo("El sumidero no puede tener ejes salientes")
+
+                    if es_sumidero_destino:
+                        tiene_sumidero = True
+                    elif v_destino == NOMBRE_FUENTE:
+                        raise ExeptionGrafo("La fuente no puede tener ejes entrantes")
+
+                    if es_fuente_origen or es_sumidero_destino:
+                        g.agregar_arista(v_origen, v_destino, capacidad)
+                    else:
+                        g.agregar_arista_bidireccional(v_origen, v_destino, capacidad)
         except ExeptionGrafo as e:
             raise e
         except FileNotFoundError as e:
             raise ExeptionGrafo(f"El archivo '{nombre_archivo}' no fue encontrado.")
         except Exception as e:
-            raise ExeptionGrafo(f"Ocurrió un error al procesar el archivo: '{nombre_archivo}'. Error: {str(e)}")
+            raise ExeptionGrafo(
+                f"Ocurrió un error al procesar el archivo: '{nombre_archivo}'. Error: {str(e)}"
+            )
+
+        if not tiene_fuente:
+            raise ExeptionGrafo("No se ha proporcionado nodo Fuente")
+        if not tiene_sumidero:
+            raise ExeptionGrafo("No se ha proporcionado nodo Sumidero")
 
         return g
 
@@ -66,7 +85,7 @@ class Grafo:
 
     def agregar_arista(self, v_origen, v_destino, capacidad):
         if self.__aristas.get(v_origen) is None:
-            self.__aristas[v_origen] = { v_destino : capacidad }
+            self.__aristas[v_origen] = {v_destino: capacidad}
         else:
             self.__aristas[v_origen][v_destino] = capacidad
 

@@ -2,6 +2,7 @@ import sys
 from grafo import Grafo
 from grafo_utils import ExeptionGrafo
 
+
 def main():
     if len(sys.argv) != 2:
         print("Uso: python ovnis.py red.txt")
