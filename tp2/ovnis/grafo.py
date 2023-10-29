@@ -1,6 +1,10 @@
 from __future__ import annotations
 
 from typing import Iterator, Any
+from grafo_utils import ExeptionGrafo
+
+NOMBRE_FUENTE = 'R'
+NOMBRE_SUMIDERO = 'S'
 
 class Grafo:
     __vertices = []
@@ -23,6 +27,8 @@ class Grafo:
     @classmethod
     def desde_archivo(self, nombre_archivo) -> Grafo:
         g = Grafo()
+        tiene_fuente = False
+        tiene_sumidero = False
 
         try:
             with open(nombre_archivo, "r") as archivo:
@@ -32,15 +38,25 @@ class Grafo:
                     v_destino = datos[1]
                     capacidad = int(datos[2])
 
+                    if v_origen == NOMBRE_FUENTE and not tiene_fuente:
+                        tiene_fuente = True
+                    if v_origen == NOMBRE_SUMIDERO:
+                        raise ExeptionGrafo("El sumidero no puede tener ejes salientes")
+
+                    if v_destino == NOMBRE_SUMIDERO and not tiene_sumidero:
+                        tiene_sumidero = True
+                    if v_destino == NOMBRE_FUENTE:
+                        raise ExeptionGrafo("La fuente no puede tener ejes entrantes")
+
                     g.agregar_vertice(v_origen)
                     g.agregar_vertice(v_destino)
                     g.agregar_arista_bidireccional(v_origen, v_destino, capacidad)
+        except ExeptionGrafo as e:
+            raise e
         except FileNotFoundError as e:
-            print(f"El archivo '{nombre_archivo}' no fue encontrado.")
-            raise e
+            raise ExeptionGrafo(f"El archivo '{nombre_archivo}' no fue encontrado.")
         except Exception as e:
-            print(f"Ocurrió un error al procesar el archivo: '{nombre_archivo}'. Error: {str(e)}")
-            raise e
+            raise ExeptionGrafo(f"Ocurrió un error al procesar el archivo: '{nombre_archivo}'. Error: {str(e)}")
 
         return g
 
