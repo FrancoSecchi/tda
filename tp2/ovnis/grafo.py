@@ -10,10 +10,12 @@ NOMBRE_SUMIDERO = "S"
 class Grafo:
     __vertices = []
     __aristas = {}
+    __aristas_ff = {}
 
     def __int__(self):
         self.__vertices = []
         self.__aristas = {}
+        self.__aristas_ff = {}
 
     def __iter__(self) -> Iterator:
         return iter(self.__vertices)
@@ -92,3 +94,63 @@ class Grafo:
     def agregar_arista_bidireccional(self, v, u, capacidad):
         self.agregar_arista(v, u, capacidad)
         self.agregar_arista(u, v, capacidad)
+
+    def breadthFirstSearch(self, comienzo, final, padres):
+        visitados = {v: False for v in self.__vertices}
+        vecinos = []
+        vecinos.append(comienzo)
+        visitados[comienzo] = True
+
+        while vecinos:
+            u = vecinos.pop(0)
+
+            if u == NOMBRE_SUMIDERO:
+                continue
+
+            for v in self.__vertices:
+                u_aristas = self.__aristas_ff.get(u)
+                costo_u_v = u_aristas.get(v)
+
+                if not visitados[v] and costo_u_v is not None and costo_u_v > 0:
+                    vecinos.append(v)
+                    visitados[v] = True
+                    padres[v] = u
+
+        return visitados[final]
+
+    def fordFulkerson(self):
+        for v in self.__vertices:
+            self.__aristas_ff[v] = {}
+            v_aristas = self.__aristas.get(v)
+
+            for u in self.__vertices:
+                if v_aristas is None:
+                    self.__aristas_ff[v][u] = 0
+                else:
+                    costo = self.__aristas[v].get(u)
+                    costo_ff = 0
+                    if costo is not None:
+                        costo_ff = self.__aristas[v][u]
+                    self.__aristas_ff[v][u] = costo_ff
+
+        padres = {v: None for v in self.__vertices}
+        flujo_maximo = 0
+
+        while self.breadthFirstSearch(NOMBRE_FUENTE, NOMBRE_SUMIDERO, padres):
+            flujo_actual = float("inf")
+            s = NOMBRE_SUMIDERO
+
+            while s != NOMBRE_FUENTE:
+                flujo_actual = min(flujo_actual, self.__aristas_ff[padres[s]][s])
+                s = padres[s]
+
+            flujo_maximo += flujo_actual
+
+            v = NOMBRE_SUMIDERO
+            while v != NOMBRE_FUENTE:
+                u = padres[v]
+                self.__aristas_ff[u][v] -= flujo_actual
+                self.__aristas_ff[v][u] += flujo_actual
+                v = padres[v]
+
+        return flujo_maximo

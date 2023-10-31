@@ -14,7 +14,9 @@ def main():
         print(e.mensaje)
         return
 
-    print(g)
+    flujo_maximo = g.fordFulkerson()
+
+    print(f"La mayor cantidad posible de datos por segundo es: {flujo_maximo}")
 
     return 0
 
