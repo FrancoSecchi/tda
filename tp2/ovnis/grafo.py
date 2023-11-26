@@ -154,3 +154,32 @@ class Grafo:
                 v = padres[v]
 
         return flujo_maximo
+
+    def obtener_configuracion_red(self):
+        configuracion = []
+        for u in self.__vertices:
+            aristas_u = self.__aristas.get(u)
+
+            if aristas_u is None:
+                continue
+
+            for v, capacidad in aristas_u.items():
+                flujo_restante = self.__aristas_ff[u][v]
+                flujo = capacidad - flujo_restante
+                if flujo > 0:
+                    configuracion.append((u, v, capacidad - flujo_restante, capacidad))
+        return configuracion
+
+    def obtener_cuellos_de_botella(self):
+        cuellos = []
+        for u in self.__vertices:
+            aristas_u = self.__aristas.get(u)
+
+            if aristas_u is None:
+                continue
+
+            for v, capacidad in self.__aristas[u].items():
+                flujo_restante = self.__aristas_ff[u][v]
+                if flujo_restante == 0:
+                    cuellos.append((u, v))
+        return cuellos

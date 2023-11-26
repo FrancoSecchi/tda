@@ -18,6 +18,16 @@ def main():
 
     print(f"La mayor cantidad posible de datos por segundo es: {flujo_maximo}")
 
+    configuracion_red = g.obtener_configuracion_red()
+    print('\nConfiguración de la Red (Flujo Real/Capacidad):')
+    for u, v, flujo, capacidad in configuracion_red:
+        print(f'{u} -> {v}: {flujo}/{capacidad}')
+
+    cuellos_botella = g.obtener_cuellos_de_botella()
+    print('\nCuellos de Botella:')
+    for u, v in cuellos_botella:
+        print(f'{u} -> {v}')
+
     return 0
 
 
