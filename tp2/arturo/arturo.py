@@ -56,6 +56,12 @@ def main():
     )
 
     cantidad_caballeros = len(nombres_caballeros)
+
+    if maximo_obtenido == 0 and idx_fin == cantidad_caballeros - 1:
+        if popularidades[idx_fin] < 0:
+            print("Todos los caballeros poseen popularidad negativa")
+            return
+
     maximo_parcial = 0
     se_llego_suma = False
     i = idx_fin
